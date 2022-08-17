@@ -1,3 +1,6 @@
+import 'package:chatapp/helper/helper.dart';
+import 'package:chatapp/services/auth.dart';
+import 'package:chatapp/views/search.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoom extends StatefulWidget {
@@ -8,6 +11,7 @@ class ChatRoom extends StatefulWidget {
 }
 
 class _ChatRoomState extends State<ChatRoom> {
+  AuthMethods authMethods = new AuthMethods();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,11 +21,27 @@ class _ChatRoomState extends State<ChatRoom> {
           height: 40,
         ),
         actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            child: Container(child: Icon(Icons.exit_to_app)),
+          GestureDetector(
+            onTap: () {
+              authMethods.signOut();
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const Authenticate()));
+            },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Container(child: const Icon(Icons.exit_to_app)),
+            ),
           )
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.search),
+        onPressed: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: ((context) => const SearchScreen())));
+        },
       ),
     );
   }

@@ -1,9 +1,12 @@
-import 'package:chatapp/projectwidgets/appWidgets.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
-class SignIn extends StatefulWidget {
-  const SignIn({Key? key}) : super(key: key);
+import 'package:chatapp/projectwidgets/appWidgets.dart';
 
+class SignIn extends StatefulWidget {
+  final Function toggle;
+  // ignore: use_key_in_widget_constructors
+  const SignIn(this.toggle);
   @override
   State<SignIn> createState() => _SignInState();
 }
@@ -93,13 +96,22 @@ class _SignInState extends State<SignIn> {
                       "Don't have account?",
                       style: mediumTextStyle(),
                     ),
-                    const Text(
-                      "Register Now",
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 202, 22, 22),
-                        fontSize: 17,
-                        decoration: TextDecoration.underline,
-                        fontWeight: FontWeight.bold,
+                    GestureDetector(
+                      onTap: () {
+                        widget.toggle();
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 10),
+                        child: const Text(
+                          "Register Now",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 202, 22, 22),
+                            fontSize: 17,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
                     )
                   ],

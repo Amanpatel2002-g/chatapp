@@ -2,12 +2,14 @@
 
 import 'package:chatapp/projectwidgets/appWidgets.dart';
 import 'package:chatapp/services/auth.dart';
+import 'package:chatapp/services/database.dart';
 import 'package:chatapp/views/chatroomsscreen.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatefulWidget {
-  const SignUp({Key? key}) : super(key: key);
-
+  final Function toggle;
+  // ignore: use_key_in_widget_constructors
+  const SignUp(this.toggle);
   @override
   State<SignUp> createState() => _SignUpState();
 }
@@ -26,15 +28,21 @@ class _SignUpState extends State<SignUp> {
 
   signMeUp() {
     if (formkey.currentState!.validate()) {
-      setState() {
+      Map<String, String> userInfoMap = {
+        "name": userNameTextEditingController.text,
+        "email": emailTextNameTextEditingController.text,
+      };
+      setState(() {
         isLoading = true;
-      }
+      });
 
+      DataBaseMethods.uploadUserInfo(userInfoMap);
       authMethods
           .signUpWithEmailAndPassWord(emailTextNameTextEditingController.text,
               passwordTextNameTextEditingController.text)
           .then((value) {
         // print("${value.userId}");
+
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => ChatRoom()));
       });
@@ -160,13 +168,21 @@ class _SignUpState extends State<SignUp> {
                             "Already have an account?",
                             style: mediumTextStyle(),
                           ),
-                          const Text(
-                            "Sign In Now",
-                            style: TextStyle(
-                              color: Color.fromARGB(255, 202, 22, 22),
-                              fontSize: 17,
-                              decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.bold,
+                          GestureDetector(
+                            onTap: () {
+                              widget.toggle();
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: const Text(
+                                "Sign In Now",
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 202, 22, 22),
+                                  fontSize: 17,
+                                  decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
                           )
                         ],
