@@ -1,109 +1,63 @@
-// ignore_for_file: unrelated_type_equality_checks
-
-import 'package:chatapp/projectwidgets/appWidgets.dart';
-import 'package:chatapp/services/database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class SearchScreen extends StatefulWidget {
-  const SearchScreen({Key? key}) : super(key: key);
+import '../projectwidgets/appWidgets.dart';
+import '../services/database.dart';
 
+// ignore: avoid_unnecessary_containers
+class Search_Page extends StatefulWidget {
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  _Search_PageState createState() => _Search_PageState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
-  TextEditingController searchTextEditingController = TextEditingController();
-  late QuerySnapshot<Map<String, dynamic>> searchSnapShot;
-  initStateSearch() {
-    DataBaseMethods.getUsersByUserNmae(searchTextEditingController.text)
-        .then((val) {
+class _Search_PageState extends State<Search_Page> {
+  TextEditingController Search_PageEditingController = TextEditingController();
+  // ignore: non_constant_identifier_names
+  late QuerySnapshot<Map<String, dynamic>> Search_PageResultSnapshot;
+
+  bool isLoading = false;
+  // ignore: non_constant_identifier_names
+  bool haveUserSearch_Pageed = false;
+
+  // ignore: non_constant_identifier_names
+  initiateSearch_Page() async {
+    if (Search_PageEditingController.text.isNotEmpty) {
       setState(() {
-        searchSnapShot = val;
+        isLoading = true;
       });
-    });
+      await DataBaseMethods.getUsersByUserNmae(Search_PageEditingController.text)
+          .then((snapshot) {
+        Search_PageResultSnapshot = snapshot;
+        print("Here we are printing the few things");
+        print(Search_PageResultSnapshot.docs[0].data()["userName"]);
+        print(Search_PageResultSnapshot.docs[0].data()["email"]);
+        // print("$Search_PageResultSnapshot");
+        setState(() {
+          isLoading = false;
+          haveUserSearch_Pageed = true;
+        });
+      });
+    }
   }
 
-  // createChatroomAndStartConversation(String username, ) {
-  //   List<String> users = [];
-  //   DataBaseMethods.createChatRoom(chatroomId, chatRoomMap)
-  // }
-
-  Widget searchList() {
-    return searchSnapShot != Null
-        ? SizedBox(
-            height: 29,
-            child: ListView.builder(
-                itemCount: searchSnapShot.docs.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return SearchTile(
-                    userName: searchSnapShot.docs[index].data()["name"],
-                    userEmail: searchSnapShot.docs[index].data()["email"],
-                  );
-                }),
-          )
+  Widget userList() {
+    return haveUserSearch_Pageed
+        ? ListView.builder(
+            shrinkWrap: true,
+            itemCount: Search_PageResultSnapshot.docs.length,
+            itemBuilder: (context, index) {
+              return userTile(
+                // ignore: avoid_print
+                Search_PageResultSnapshot.docs[index].data()["name"],
+                Search_PageResultSnapshot.docs[index].data()["email"],
+              );
+            })
         : Container();
   }
 
-  @override
-  void initState() {
-    // initStateSearch();
-    super.initState();
-  }
+  /// 1.create a chatroom, send user to the chatroom, other userdetails
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBarMain(context),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(children: [
-          Container(
-            color: const Color(0x54FFFFFF),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: Row(
-              children: [
-                const Expanded(
-                    child: TextField(
-                  style: TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                      hintText: "Search Username......",
-                      hintStyle: TextStyle(color: Colors.white54),
-                      border: InputBorder.none),
-                )),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(colors: [
-                          Color(0x36FFFFFF),
-                          Color(0x0FFFFFFF),
-                        ]),
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                      padding: const EdgeInsets.all(12),
-                      child: Image.asset("assets/images/search_white.png")),
-                ),
-              ],
-            ),
-          )
-        ]),
-      ),
-    );
-  }
-}
-
-class SearchTile extends StatelessWidget {
-  final String userName;
-  final String userEmail;
-  SearchTile({required this.userName, required this.userEmail});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget userTile(String userName, String userEmail) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
@@ -113,29 +67,99 @@ class SearchTile extends StatelessWidget {
             children: [
               Text(
                 userName,
-                style: mediumTextStyle(),
+                style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
               Text(
                 userEmail,
-                style: mediumTextStyle(),
+                style: const TextStyle(color: Colors.white, fontSize: 16),
               )
             ],
           ),
           const Spacer(),
-          Container(
-            decoration: BoxDecoration(
-                color: Colors.blue, borderRadius: BorderRadius.circular(30)),
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-            child: GestureDetector(
-              onTap: () {},
-              child: Text(
+          GestureDetector(
+            onTap: () {},
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                  color: Colors.blue, borderRadius: BorderRadius.circular(24)),
+              child: const Text(
                 "Message",
-                style: mediumTextStyle(),
+                style: TextStyle(color: Colors.white, fontSize: 16),
               ),
             ),
           )
         ],
       ),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: simpleTextStyle(),
+      body: isLoading
+          ? Container(
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            )
+          : Container(
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 24, vertical: 16),
+                    color: const Color(0x54FFFFFF),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: Search_PageEditingController,
+                            style: simpleTextStyle(),
+                            decoration: const InputDecoration(
+                                hintText: "Search_Page username ...",
+                                hintStyle: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                                border: InputBorder.none),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            initiateSearch_Page();
+                          },
+                          child: Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                      colors: [
+                                        Color(0x36FFFFFF),
+                                        Color(0x0FFFFFFF),
+                                      ],
+                                      begin: FractionalOffset.topLeft,
+                                      end: FractionalOffset.bottomRight),
+                                  borderRadius: BorderRadius.circular(40)),
+                              padding: const EdgeInsets.all(12),
+                              child: Image.asset(
+                                "assets/images/search_white.png",
+                                height: 25,
+                                width: 25,
+                              )),
+                        )
+                      ],
+                    ),
+                  ),
+                  userList()
+                ],
+              ),
+            ),
     );
   }
 }

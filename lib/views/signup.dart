@@ -20,7 +20,7 @@ class _SignUpState extends State<SignUp> {
   AuthMethods authMethods = new AuthMethods();
 
   TextEditingController userNameTextEditingController = TextEditingController();
-  TextEditingController emailTextNameTextEditingController =
+  TextEditingController emailTextEditingController =
       TextEditingController();
   TextEditingController passwordTextNameTextEditingController =
       TextEditingController();
@@ -30,7 +30,7 @@ class _SignUpState extends State<SignUp> {
     if (formkey.currentState!.validate()) {
       Map<String, String> userInfoMap = {
         "name": userNameTextEditingController.text,
-        "email": emailTextNameTextEditingController.text,
+        "email": emailTextEditingController.text,
       };
       setState(() {
         isLoading = true;
@@ -38,13 +38,13 @@ class _SignUpState extends State<SignUp> {
 
       DataBaseMethods.uploadUserInfo(userInfoMap);
       authMethods
-          .signUpWithEmailAndPassWord(emailTextNameTextEditingController.text,
+          .signUpWithEmailAndPassWord(emailTextEditingController.text,
               passwordTextNameTextEditingController.text)
           .then((value) {
         // print("${value.userId}");
 
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => ChatRoom()));
+            context, MaterialPageRoute(builder: (context) => const ChatRoom()));
       });
     }
   }
@@ -86,7 +86,7 @@ class _SignUpState extends State<SignUp> {
                                 ? null
                                 : "Please enter the valid email";
                           },
-                          controller: emailTextNameTextEditingController,
+                          controller: emailTextEditingController,
                           style: simpleTextStyle(),
                           decoration: textFieldInputDecoration("Email")),
                       const SizedBox(

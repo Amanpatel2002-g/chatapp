@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
           scaffoldBackgroundColor: const Color(0xff1F1F1F),
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity),
-      home: const ChatRoom(),
+      home: const Authenticate(),
     );
   }
 }

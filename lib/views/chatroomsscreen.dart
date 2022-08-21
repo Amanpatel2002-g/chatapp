@@ -40,7 +40,7 @@ class _ChatRoomState extends State<ChatRoom> {
         child: const Icon(Icons.search),
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: ((context) => const SearchScreen())));
+              MaterialPageRoute(builder: ((context) =>  Search_Page())));
         },
       ),
     );
