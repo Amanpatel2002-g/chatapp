@@ -1,5 +1,6 @@
 // ignore_for_file: unnecessary_new
 
+import 'package:chatapp/helper/helperFunctions.dart';
 import 'package:chatapp/projectwidgets/appWidgets.dart';
 import 'package:chatapp/services/auth.dart';
 import 'package:chatapp/services/database.dart';
@@ -17,11 +18,9 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   bool isLoading = false;
 
-  AuthMethods authMethods = new AuthMethods();
 
   TextEditingController userNameTextEditingController = TextEditingController();
-  TextEditingController emailTextEditingController =
-      TextEditingController();
+  TextEditingController emailTextEditingController = TextEditingController();
   TextEditingController passwordTextNameTextEditingController =
       TextEditingController();
   final formkey = GlobalKey<FormState>();
@@ -32,17 +31,23 @@ class _SignUpState extends State<SignUp> {
         "name": userNameTextEditingController.text,
         "email": emailTextEditingController.text,
       };
+
       setState(() {
         isLoading = true;
       });
 
+      helperFunctions
+          .saveUserEmailSharedPreference(emailTextEditingController.text);
+      helperFunctions
+          .saveUserNameSharedPreference(userNameTextEditingController.text);
       DataBaseMethods.uploadUserInfo(userInfoMap);
-      authMethods
+      helperFunctions.saveuserLoggedInSharedPreference(true);
+
+      AuthMethods
           .signUpWithEmailAndPassWord(emailTextEditingController.text,
               passwordTextNameTextEditingController.text)
           .then((value) {
         // print("${value.userId}");
-
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => const ChatRoom()));
       });

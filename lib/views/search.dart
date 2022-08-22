@@ -13,7 +13,7 @@ class Search_Page extends StatefulWidget {
 class _Search_PageState extends State<Search_Page> {
   TextEditingController Search_PageEditingController = TextEditingController();
   // ignore: non_constant_identifier_names
-  late QuerySnapshot<Map<String, dynamic>> Search_PageResultSnapshot;
+  
 
   bool isLoading = false;
   // ignore: non_constant_identifier_names
@@ -25,7 +25,7 @@ class _Search_PageState extends State<Search_Page> {
       setState(() {
         isLoading = true;
       });
-      await DataBaseMethods.getUsersByUserNmae(Search_PageEditingController.text)
+      await DataBaseMethods.getUsersByUserName(Search_PageEditingController.text)
           .then((snapshot) {
         Search_PageResultSnapshot = snapshot;
         print("Here we are printing the few things");
@@ -39,7 +39,12 @@ class _Search_PageState extends State<Search_Page> {
       });
     }
   }
+  // create chatroom , send user to conversation screen, push_replacement
 
+  createChatRoomAndStartConversation(String userName){
+    List<String> users = [userName, ];
+    DataBaseMethods.createChatRoom( )
+  }
 
   Widget userList() {
     return haveUserSearch_Pageed

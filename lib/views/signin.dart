@@ -1,7 +1,14 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:chatapp/helper/helperFunctions.dart';
+import 'package:chatapp/services/auth.dart';
+import 'package:chatapp/services/database.dart';
+import 'package:chatapp/views/signup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:chatapp/projectwidgets/appWidgets.dart';
+
+import 'chatroomsscreen.dart';
 
 class SignIn extends StatefulWidget {
   final Function toggle;
@@ -12,6 +19,30 @@ class SignIn extends StatefulWidget {
 }
 
 class _SignInState extends State<SignIn> {
+  final formkey = GlobalKey<FormState>();
+  TextEditingController emailTextEditingController = TextEditingController();
+  TextEditingController passwordTextEditingController = TextEditingController();
+  late QuerySnapshot<Map<String, dynamic>> querySnapshot;
+  signMeIN() {
+    if (formkey.currentState!.validate()) {
+      AuthMethods.signInWithEmail(
+          emailTextEditingController.text, passwordTextEditingController.text);
+      DataBaseMethods.getUsersByUserEmail(emailTextEditingController.text)
+          .then((value) {
+        helperFunctions
+            .saveUserNameSharedPreference(querySnapshot.docs[0].data()["name"]);
+      });
+      AuthMethods.signUpWithEmailAndPassWord(emailTextEditingController.text,
+              passwordTextEditingController.text)
+          .then((value) {
+        if (value != null) {
+          helperFunctions.saveuserLoggedInSharedPreference(true);
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: ((context) => const ChatRoom())));
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,18 +56,38 @@ class _SignInState extends State<SignIn> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
-                    style: simpleTextStyle(),
-                    decoration: textFieldInputDecoration("Email")),
-                const SizedBox(
-                  height: 8,
-                ),
-                TextField(
-                    style: simpleTextStyle(),
-                    decoration: textFieldInputDecoration("PassWord")),
-                const SizedBox(
-                  height: 8,
-                ),
+                Form(
+                    key: formkey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                            controller: emailTextEditingController,
+                            validator: (value) {
+                              return RegExp(
+                                          r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                                      .hasMatch(value!)
+                                  ? null
+                                  : "Please enter the valid email";
+                            },
+                            style: simpleTextStyle(),
+                            decoration: textFieldInputDecoration("Email")),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        TextFormField(
+                            controller: passwordTextEditingController,
+                            validator: (value) {
+                              return value!.length > 6
+                                  ? null
+                                  : "Please provide a valid  password";
+                            },
+                            style: simpleTextStyle(),
+                            decoration: textFieldInputDecoration("PassWord")),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                      ],
+                    )),
                 Container(
                   alignment: Alignment.centerRight,
                   child: Container(
@@ -51,21 +102,26 @@ class _SignInState extends State<SignIn> {
                 const SizedBox(
                   height: 8,
                 ),
-                Container(
-                  alignment: Alignment.center,
-                  width: MediaQuery.of(context).size.width,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                      gradient: const LinearGradient(colors: [
-                        Color(0xff007EE4),
-                        Color(0xff007EE4),
-                      ]),
-                      borderRadius: BorderRadius.circular(30)),
-                  child: const Text("Sign In",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 17,
-                      )),
+                GestureDetector(
+                  onTap: () {
+                    signMeIN();
+                  },
+                  child: Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    decoration: BoxDecoration(
+                        gradient: const LinearGradient(colors: [
+                          Color(0xff007EE4),
+                          Color(0xff007EE4),
+                        ]),
+                        borderRadius: BorderRadius.circular(30)),
+                    child: const Text("Sign In",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 17,
+                        )),
+                  ),
                 ),
                 const SizedBox(
                   height: 16,
