@@ -1,3 +1,6 @@
+import 'package:chatapp/helper/constants.dart';
+import 'package:chatapp/helper/helperFunctions.dart';
+import 'package:chatapp/views/conversation_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +16,7 @@ class Search_Page extends StatefulWidget {
 class _Search_PageState extends State<Search_Page> {
   TextEditingController Search_PageEditingController = TextEditingController();
   // ignore: non_constant_identifier_names
-  
+  late QuerySnapshot<Map<String, dynamic>> Search_PageResultSnapshot;
 
   bool isLoading = false;
   // ignore: non_constant_identifier_names
@@ -25,7 +28,8 @@ class _Search_PageState extends State<Search_Page> {
       setState(() {
         isLoading = true;
       });
-      await DataBaseMethods.getUsersByUserName(Search_PageEditingController.text)
+      await DataBaseMethods.getUsersByUserName(
+              Search_PageEditingController.text)
           .then((snapshot) {
         Search_PageResultSnapshot = snapshot;
         print("Here we are printing the few things");
@@ -41,9 +45,25 @@ class _Search_PageState extends State<Search_Page> {
   }
   // create chatroom , send user to conversation screen, push_replacement
 
-  createChatRoomAndStartConversation(String userName){
-    List<String> users = [userName, ];
-    DataBaseMethods.createChatRoom( )
+  getChatRoomId(String a, String b) {
+    if (a.substring(0, 1).codeUnitAt(0) > b.substring(0, 1).codeUnitAt(0)) {
+      return "$b\_$a";
+    } else {
+      return "$a\_$b";
+    }
+  }
+
+  createChatRoomAndStartConversation(String userName) {
+    String chatRoomId = getChatRoomId(userName, constants.myname);
+
+    List<String> users = [userName, constants.myname];
+    Map<String, dynamic> chatRoomMap = {
+      "users": users,
+      "chatRoomId": chatRoomId
+    };
+    DataBaseMethods.createChatRoom(chatRoomId, users);
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => const ConversationScreen()));
   }
 
   Widget userList() {
@@ -101,7 +121,13 @@ class _Search_PageState extends State<Search_Page> {
 
   @override
   void initState() {
+    getUserInfo();
     super.initState();
+  }
+
+  getUserInfo() async {
+    constants.myname =
+        (await helperFunctions.getUserNameSharedPreference()) as String;
   }
 
   @override
