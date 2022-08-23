@@ -1,4 +1,5 @@
 import 'package:chatapp/helper/helper.dart';
+import 'package:chatapp/helper/helperFunctions.dart';
 import 'package:chatapp/services/auth.dart';
 import 'package:chatapp/views/search.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class _ChatRoomState extends State<ChatRoom> {
         actions: [
           GestureDetector(
             onTap: () {
+              helperFunctions.saveuserLoggedInSharedPreference(false);
               authMethods.signOut();
               Navigator.pushReplacement(
                   context,
@@ -40,7 +42,7 @@ class _ChatRoomState extends State<ChatRoom> {
         child: const Icon(Icons.search),
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: ((context) =>  Search_Page())));
+              MaterialPageRoute(builder: ((context) => Search_Page())));
         },
       ),
     );
