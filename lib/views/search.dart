@@ -61,7 +61,7 @@ class _Search_PageState extends State<Search_Page> {
       "users": users,
       "chatRoomId": chatRoomId
     };
-    DataBaseMethods.createChatRoom(chatRoomId, users);
+    DataBaseMethods.createChatRoom(chatRoomId, chatRoomMap);
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => const ConversationScreen()));
   }
@@ -72,7 +72,7 @@ class _Search_PageState extends State<Search_Page> {
             shrinkWrap: true,
             itemCount: Search_PageResultSnapshot.docs.length,
             itemBuilder: (context, index) {
-              return userTile(
+              return searchTile(
                 // ignore: avoid_print
                 Search_PageResultSnapshot.docs[index].data()["name"],
                 Search_PageResultSnapshot.docs[index].data()["email"],
@@ -83,7 +83,7 @@ class _Search_PageState extends State<Search_Page> {
 
   /// 1.create a chatroom, send user to the chatroom, other userdetails
 
-  Widget userTile(String userName, String userEmail) {
+  Widget searchTile(String userName, String userEmail) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: Row(
@@ -103,7 +103,10 @@ class _Search_PageState extends State<Search_Page> {
           ),
           const Spacer(),
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              createChatRoomAndStartConversation(
+                  Search_PageEditingController.text);
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
@@ -127,13 +130,13 @@ class _Search_PageState extends State<Search_Page> {
 
   getUserInfo() async {
     constants.myname =
-        (await helperFunctions.getUserNameSharedPreference()) as String;
+        (await helperFunctions.getUserNameSharedPreference())!;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: simpleTextStyle(),
+      appBar: appBarMain(context),
       body: isLoading
           ? Container(
               child: const Center(
