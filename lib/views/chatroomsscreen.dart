@@ -31,9 +31,9 @@ class _ChatRoomState extends State<ChatRoom> {
                   MaterialPageRoute(
                       builder: (context) => const Authenticate()));
             },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Container(child: const Icon(Icons.exit_to_app)),
+            child: const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 10),
+              child:  Icon(Icons.exit_to_app),
             ),
           )
         ],
