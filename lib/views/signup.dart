@@ -25,7 +25,7 @@ class _SignUpState extends State<SignUp> {
       TextEditingController();
   final formkey = GlobalKey<FormState>();
 
-  signMeUp() {
+  signMeUp(){
     if (formkey.currentState!.validate()) {
       Map<String, String> userInfoMap = {
         "name": userNameTextEditingController.text,

@@ -8,7 +8,7 @@ class AuthMethods {
     return U(userId: u.uid);
   }
 
-  static Future signInWithEmail(String email, String password) async {
+  static Future signInWithEmailandPassword(String email, String password) async {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -43,4 +43,5 @@ class AuthMethods {
       return await _auth.signOut();
     } catch (e) {}
   }
+
 }
