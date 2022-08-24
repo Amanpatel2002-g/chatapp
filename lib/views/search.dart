@@ -1,4 +1,5 @@
-import 'package:chatapp/helper/constants.dart';
+// import 'package:chatapp/helper/Constants.dart';
+import 'package:chatapp/helper/constant.dart';
 import 'package:chatapp/helper/helperFunctions.dart';
 import 'package:chatapp/views/conversation_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -54,16 +55,18 @@ class _Search_PageState extends State<Search_Page> {
   }
 
   createChatRoomAndStartConversation(String userName) {
-    String chatRoomId = getChatRoomId(userName, constants.myname);
+    String chatRoomId = getChatRoomId(userName, Constants.myname);
 
-    List<String> users = [userName, constants.myname];
+    List<String> users = [userName, Constants.myname];
     Map<String, dynamic> chatRoomMap = {
       "users": users,
       "chatRoomId": chatRoomId
     };
     DataBaseMethods.createChatRoom(chatRoomId, chatRoomMap);
-    Navigator.push(context,
-        MaterialPageRoute(builder: (context) => const ConversationScreen()));
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => ConversationScreen(chatRoomId: chatRoomId)));
   }
 
   Widget userList() {
@@ -129,8 +132,7 @@ class _Search_PageState extends State<Search_Page> {
   }
 
   getUserInfo() async {
-    constants.myname =
-        (await helperFunctions.getUserNameSharedPreference())!;
+    Constants.myname = (await helperFunctions.getUserNameSharedPreference())!;
   }
 
   @override

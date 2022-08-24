@@ -1,6 +1,7 @@
 import 'package:chatapp/helper/helper.dart';
 import 'package:chatapp/helper/helperFunctions.dart';
 import 'package:chatapp/views/chatroomsscreen.dart';
+import 'package:chatapp/views/conversation_screen.dart';
 import 'package:chatapp/views/signup.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -28,9 +29,8 @@ class _MyAppState extends State<MyApp> {
   }
 
   isuserloggedin() async {
-    setState(() async {
     islogedin = (await helperFunctions.getUserLoggedInSharedPreference())!;
-    });
+    setState(() {});
   }
 
   @override
@@ -44,6 +44,7 @@ class _MyAppState extends State<MyApp> {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity),
       home: islogedin? const ChatRoom(): const Authenticate(),
+      // home: ConversationScreen(chatRoomId: null,),
     );
   }
 }
